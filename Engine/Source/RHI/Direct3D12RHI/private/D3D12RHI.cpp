@@ -22,9 +22,9 @@ namespace GameEngine
 			m_d3d12Private->Init();
 		}
 
-		void D3D12RHI::Update(Mesh::Ptr mesh, Material::Ptr material)
+		void D3D12RHI::Update(Mesh::Ptr mesh, Material::Ptr material, double dt)
 		{
-			m_d3d12Private->Update(mesh, material);
+			m_d3d12Private->Update(mesh, material, dt);
 		}
 
 		Mesh::Ptr D3D12RHI::CreateBoxMesh()
@@ -66,6 +66,33 @@ namespace GameEngine
 				// bottom face
 				4, 0, 3,
 				4, 3, 7
+			};
+
+			return m_d3d12Private->CreateMesh(vertices.begin(), vertices.size(), sizeof(Vertex), indices.begin(), indices.size(), sizeof(uint16_t));
+		}
+
+		Mesh::Ptr D3D12RHI::CreateOctahedronMesh()
+		{
+			array<Vertex, 6> vertices =
+			{
+				Vertex({ Math::Vector3f(+1.0f, +0.0f, +0.0f), Math::Vector4f((float*)&DirectX::Colors::White) }),
+				Vertex({ Math::Vector3f(-1.0f, +0.0f, +0.0f), Math::Vector4f((float*)&DirectX::Colors::Black) }),
+				Vertex({ Math::Vector3f(+0.0f, +1.0f, +0.0f), Math::Vector4f((float*)&DirectX::Colors::Red) }),
+				Vertex({ Math::Vector3f(+0.0f, -1.0f, +0.0f), Math::Vector4f((float*)&DirectX::Colors::Green) }),
+				Vertex({ Math::Vector3f(+0.0f, +0.0f, +1.0f), Math::Vector4f((float*)&DirectX::Colors::Blue) }),
+				Vertex({ Math::Vector3f(+0.0f, +0.0f, -1.0f), Math::Vector4f((float*)&DirectX::Colors::Yellow) }),
+			};
+
+			array<uint16_t, 24> indices =
+			{
+				0, 2, 4,
+				2, 1, 4,
+				3, 0, 4,
+				2, 0, 5,
+				1, 3, 4,
+				1, 2, 5,
+				0, 3, 5,
+				3, 1, 5,
 			};
 
 			return m_d3d12Private->CreateMesh(vertices.begin(), vertices.size(), sizeof(Vertex), indices.begin(), indices.size(), sizeof(uint16_t));

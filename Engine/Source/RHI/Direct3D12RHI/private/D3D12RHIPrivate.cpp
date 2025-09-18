@@ -248,13 +248,15 @@ namespace GameEngine
 			}
 		}
 
-		void D3D12RHIPrivate::Update(Mesh::Ptr mesh, Material::Ptr material)
+		void D3D12RHIPrivate::Update(Mesh::Ptr mesh, Material::Ptr material, double dt)
 		{
+			m_Time += dt;
+
 			D3D12Mesh d3d12Mesh = *reinterpret_cast<D3D12Mesh*>(mesh.get());
 			D3D12Material d3d12Material = *reinterpret_cast<D3D12Material*>(material.get());
 
-			float mTheta = 1.5f * DirectX::XM_PI;
-			float mPhi = DirectX::XM_PIDIV4;
+			float mTheta = m_Time * 0.5f * DirectX::XM_PI;
+			float mPhi = 0.4f * DirectX::XM_PI;
 			float mRadius = 5.0f;
 
 			// Convert Spherical to Cartesian coordinates.

@@ -11,16 +11,16 @@ namespace GameEngine::Render
 
 		RenderObject::Ptr box = std::make_shared<RenderObject>();
 		m_RenderObjects.push_back(box);
-		box->m_mesh = m_rhi->CreateBoxMesh();
+		box->m_mesh = m_rhi->CreateOctahedronMesh();
 		box->m_material = m_rhi->GetMaterial(box->m_mesh->GetName());
 		
 		m_rhi->ExecuteCommandLists();
 		m_rhi->Flush();
 	}
 
-	void RenderEngine::Update()
+	void RenderEngine::Update(double dt)
 	{
-		m_rhi->Update(m_RenderObjects[0]->m_mesh, m_RenderObjects[0]->m_material);
+		m_rhi->Update(m_RenderObjects[0]->m_mesh, m_RenderObjects[0]->m_material, dt);
 
 		m_rhi->Flush();
 	}

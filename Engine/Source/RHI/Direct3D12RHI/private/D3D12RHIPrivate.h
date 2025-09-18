@@ -42,7 +42,7 @@ namespace GameEngine
 			
 			Material::Ptr GetMaterial(const std::string& name);
 
-			void Update(Mesh::Ptr mesh, Material::Ptr material);
+			void Update(Mesh::Ptr mesh, Material::Ptr material, double dt);
 			void ExecuteCommandLists();
 			void FlushCommandQueue();
 			void OnResize();
@@ -81,6 +81,8 @@ namespace GameEngine
 
 			D3D12_VIEWPORT m_ScreenViewport;
 			D3D12_RECT m_ScissorRect;
+
+			double m_Time = 0.0;
 
 		private:
 			void CreateFactory();

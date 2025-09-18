@@ -1,4 +1,5 @@
 #include <Game.h>
+#include <chrono>
 
 namespace GameEngine
 {
@@ -17,14 +18,19 @@ namespace GameEngine
 		assert(PlatformLoop != nullptr);
 
 		bool quit = false;
+		auto prev_time = std::chrono::steady_clock::now();
 		while (!quit)
 		{
+			auto curr_time = std::chrono::steady_clock::now();
+			std::chrono::duration<double> dt = curr_time - prev_time;
+			prev_time = curr_time;
+
 			// The most common idea for such a loop is that it returns false when quit is required, or true otherwise
 			quit = !PlatformLoop();
 
 			ProcessSystemParams();
 
-			m_renderEngine->Update();
+			m_renderEngine->Update(dt.count());
 		}
 	}
 
