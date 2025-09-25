@@ -1,6 +1,7 @@
 #pragma once
 
 #include <Camera.h>
+#include <InputManager.h>
 #include <Constants.h>
 #include <Window/IWindow.h>
 #include <Window.h>
@@ -45,5 +46,10 @@ namespace GameEngine::Core
         }
 
         window->SetMousePos(x, y);
+    }
+
+    void OnKeyUpDown(InputManager* inputManager)
+    {
+        inputManager->ProcessKeyEvent();
     }
 }

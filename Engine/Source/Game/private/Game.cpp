@@ -1,4 +1,5 @@
 #include <Camera.h>
+#include <InputManager.h>
 #include <DefaultGeometry.h>
 #include <Game.h>
 #include <GameObject.h>
@@ -11,6 +12,8 @@ namespace GameEngine
 		PlatformLoop(PlatformLoopFunc)
 	{
 		Core::g_MainCamera = new Core::Camera();
+		Core::g_InputManager = new Core::InputManager();
+		Core::g_InputManager->ReadConfig();
 		Core::g_MainCamera->SetPosition(Math::Vector3f(0.0f, 6.0f, -6.0f));
 		Core::g_MainCamera->SetViewDir(Math::Vector3f(0.0f, -6.0f, 6.0f).Normalized());
 
@@ -48,6 +51,12 @@ namespace GameEngine
 
 	void Game::Update(float dt)
 	{
+		float displacement = 0.5f * dt;
+		if (Core::g_InputManager->IsActionKeyDown())
+		{
+			displacement = -displacement;
+		}
+
 		for (int i = 0; i < m_Objects.size(); ++i)
 		{
 			Math::Vector3f pos = m_Objects[i]->GetPosition();
@@ -55,16 +64,16 @@ namespace GameEngine
 			// Showcase
 			if (i == 0)
 			{
-				pos.x += 0.5f * dt;
+				pos.x += displacement;
 			}
 			else if (i == 1)
 			{
-				pos.y -= 0.5f * dt;
+				pos.y -= displacement;
 			}
 			else if (i == 2)
 			{
-				pos.x += 0.5f * dt;
-				pos.y -= 0.5f * dt;
+				pos.x += displacement;
+				pos.y -= displacement;
 			}
 			m_Objects[i]->SetPosition(pos, m_renderThread->GetMainFrame());
 		}
