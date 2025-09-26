@@ -1,5 +1,6 @@
 #pragma once
 
+#include <windows.h>
 #include <Core/export.h>
 
 namespace GameEngine
@@ -9,7 +10,7 @@ namespace GameEngine
 		class CORE_API InputManager final
 		{
 		public:
-			InputManager();
+			InputManager() = default;
 			~InputManager() = default;
 
 		public:
@@ -19,6 +20,9 @@ namespace GameEngine
 
 		private:
 			bool m_ActionKeyDown = false;
+
+			int m_ActionKeyCode = VK_SPACE;
+			int m_ExitKeyCode = VK_ESCAPE;
 		};
 
 		extern CORE_API InputManager* g_InputManager;

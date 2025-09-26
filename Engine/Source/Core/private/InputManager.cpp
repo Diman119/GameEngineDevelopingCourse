@@ -1,15 +1,16 @@
 #include <InputManager.h>
-#include <windows.h>
+#include <INIReader.h>
 
 namespace GameEngine::Core
 {
 	InputManager* g_InputManager = nullptr;
 
-	InputManager::InputManager()
-	{}
-
 	void InputManager::ReadConfig()
 	{
+		static const std::string SECTION = "Input";
+		auto reader = INIReader("config.ini");
+		m_ActionKeyCode = reader.GetInteger(SECTION, "ActionKeyCode", m_ActionKeyCode);
+		m_ExitKeyCode = reader.GetInteger(SECTION, "ExitKeyCode", m_ExitKeyCode);
 	}
 
 	bool InputManager::IsActionKeyDown()
@@ -19,11 +20,11 @@ namespace GameEngine::Core
 
 	void InputManager::ProcessKeyEvent()
 	{
-		if (GetAsyncKeyState(VK_ESCAPE) & 1)
+		if (GetAsyncKeyState(m_ExitKeyCode) & 1)
 		{
 			PostQuitMessage(0);
 		}
 
-		m_ActionKeyDown = GetAsyncKeyState(VK_SPACE) & 1;
+		m_ActionKeyDown = GetAsyncKeyState(m_ActionKeyCode) & 1;
 	}
 }
