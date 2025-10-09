@@ -52,4 +52,9 @@ namespace GameEngine::Core
 
 		return totalTime.count();
 	}
+
+	bool Timer::IsStopped() const
+	{
+		return m_bIsStopped;
+	}
 }

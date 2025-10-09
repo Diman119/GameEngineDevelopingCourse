@@ -41,7 +41,8 @@ void GameFramework::Init()
 		.set(Position{ Math::Vector3f(0.0f, 12.0f, -10.0f) })
 		.set(Speed{ 10.f })
 		.set(CameraPtr{ Core::g_MainCamera })
-		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) });
+		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
+		.set(Shooter{ 0.4f, 2.f, 6, 6, 0.f, Core::Timer() });
 }
 
 void GameFramework::Update(float dt)
