@@ -1,6 +1,8 @@
 #include <ecsPhys.h>
 #include <flecs.h>
 
+#include "ecsControl.h"
+
 namespace
 {
 	inline float rand_flt(float from, float to)
@@ -70,5 +72,19 @@ void RegisterEcsPhysSystems(flecs::world& world)
 		pos.value.x += rand_flt(-shiver.value, shiver.value);
 		pos.value.y += rand_flt(-shiver.value, shiver.value);
 		pos.value.z += rand_flt(-shiver.value, shiver.value);
+	});
+
+
+	world.system<Position, const Destructible>()
+		.each([&](Position& pos, const Destructible& destructible)
+	{
+		destructible.q.each([&](const Position& projectilePos, Projectile& projectile)
+		{
+			if ((projectilePos.value - pos.value).GetSqLength() < 2.f)
+			{
+				pos.value.x = pos.value.y = pos.value.z = -1e5f;
+				projectile.shooterPtr->currentAmmo += destructible.ammoBonus;
+			}
+		});
 	});
 }

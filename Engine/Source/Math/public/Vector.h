@@ -74,6 +74,11 @@ namespace GameEngine
 				return sqrtf(x * x + y * y + z * z);
 			}
 
+			inline float GetSqLength() const
+			{
+				return x * x + y * y + z * z;
+			}
+
 			inline Vector3<T> Normalized() const
 			{
 				float length = GetLength();
@@ -91,7 +96,7 @@ namespace GameEngine
 				return result;
 			}
 
-			inline Vector3<T> operator+(Vector3<T> other)
+			inline Vector3<T> operator+(Vector3<T> other) const
 			{
 				Vector3<T> result;
 				result.x = x + other.x;
@@ -100,7 +105,7 @@ namespace GameEngine
 				return result;
 			}
 
-			inline Vector3<T> operator-(Vector3<T> other)
+			inline Vector3<T> operator-(Vector3<T> other) const
 			{
 				Vector3<T> result;
 				result.x = x - other.x;
@@ -109,7 +114,7 @@ namespace GameEngine
 				return result;
 			}
 
-			inline Vector3<T> operator-()
+			inline Vector3<T> operator-() const
 			{
 				Vector3<T> result;
 				result.x = -x;

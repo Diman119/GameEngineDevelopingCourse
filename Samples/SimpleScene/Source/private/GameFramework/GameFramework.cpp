@@ -42,7 +42,29 @@ void GameFramework::Init()
 		.set(Speed{ 10.f })
 		.set(CameraPtr{ Core::g_MainCamera })
 		.set(ControllerPtr{ new Core::Controller(Core::g_FileSystem->GetConfigPath("Input_default.ini")) })
-		.set(Shooter{ 0.4f, 2.f, 6, 6, 0.f, Core::Timer() });
+		.set(Shooter{ 0.1f, 2.f, 20.f, 6, 6, 0.f, Core::Timer() });
+
+	flecs::query<const Position, Projectile> q = m_World.query<const Position, Projectile>();
+
+	// destructible without bonus
+	for (int i = 0; i < 10; ++i)
+	{
+		m_World.entity()
+			.set(Position{ Math::Vector3f(-8.f, i * 3 + 8.f, 0.f) })
+			.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+			.set(RenderObjectPtr{ new Render::RenderObject() })
+			.set(Destructible{ 0, q });
+	}
+
+	// destructible with bonus
+	for (int i = 0; i < 10; ++i)
+	{
+		m_World.entity()
+			.set(Position{ Math::Vector3f(i * 3 + 8.f, 8.f, 0.f) })
+			.set(GeometryPtr{ RenderCore::DefaultGeometry::Cube() })
+			.set(RenderObjectPtr{ new Render::RenderObject() })
+			.set(Destructible{ 10, q });
+	}
 }
 
 void GameFramework::Update(float dt)

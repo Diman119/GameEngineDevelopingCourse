@@ -82,7 +82,7 @@ void RegisterEcsControlSystems(flecs::world& world)
 
 			projectile
 				.set(Position{ position.value })
-				.set(Velocity{ camera.ptr->GetViewDir() * 10.f })
+				.set(Velocity{ camera.ptr->GetViewDir() * shooter.projectileSpeed })
 				.set(Gravity{ Math::Vector3f(0.f, -9.8065f, 0.f) });
 
 			if (--shooter.currentAmmo <= 0)

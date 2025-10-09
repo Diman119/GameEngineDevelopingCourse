@@ -3,6 +3,8 @@
 #include <flecs.h>
 #include <Timer.h>
 
+struct Position;
+
 namespace GameEngine::Core
 {
 	class Camera;
@@ -28,6 +30,7 @@ struct Shooter
 {
 	float shotInterval;
 	float reloadInterval;
+	float projectileSpeed;
 	int currentAmmo;
 	int defaultAmmo;
 	float nextShotInterval;
@@ -40,6 +43,12 @@ struct Projectile
 	Shooter* shooterPtr;
 	float destroyInterval;
 	GameEngine::Core::Timer timer;
+};
+
+struct Destructible
+{
+	int ammoBonus;
+	flecs::query<const Position, Projectile> q;
 };
 
 void RegisterEcsControlSystems(flecs::world& world);
