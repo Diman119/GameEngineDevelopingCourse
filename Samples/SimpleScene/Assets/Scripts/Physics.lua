@@ -16,14 +16,18 @@ end
 local function gravity(it)
     for pos, vel, grav, plane, ent in ecs.each(it) do
         local planeEpsilon = 0.1
-		
+
+        -- тут было return вместо continue и я час не мог понять почему гравитация не работает в рандомные моменты
+        -- пофиксите пожалуйста в апстриме для будущих поколений
 		if plane.x * pos.x + plane.y * pos.y + plane.z * pos.z < plane.w + planeEpsilon then
-			do return end
+			goto continue
 		end
-		
+
 		vel.x = vel.x + grav.x * it.delta_time
         vel.y = vel.y + grav.y * it.delta_time
 		vel.z = vel.z + grav.z * it.delta_time
+
+		::continue::
     end
 end
 
@@ -60,9 +64,47 @@ local function BounceSystem(it)
     end
 end
 
+local function TimedDestructionSystem(it)
+    for pos, timer in ecs.each(it) do
+        if timer.timeLeft < 0.0 then
+            goto continue
+        end
+
+        timer.timeLeft = timer.timeLeft - it.delta_time
+
+        if timer.timeLeft < 0.0 then
+            pos.x = 1e5
+            pos.y = 1e5
+            pos.z = 1e5
+        end
+
+        ::continue::
+    end
+end
+
+local function distance(pos1, pos2)
+    local dx = pos1.x - pos2.x
+    local dy = pos1.y - pos2.y
+    local dz = pos1.z - pos2.z
+    return math.sqrt(dx * dx + dy * dy + dz * dz)
+end
+
+local projectileQuery = ecs.query("Position, ProjectileCollider")
+
+local function CollisionSystem(it)
+    for pos1, vel, collider in ecs.each(it) do
+        for pos2, _ in ecs.each(projectileQuery) do
+            if distance(pos1, pos2) < collider.radius then
+                vel.y = 20.0
+            end
+        end
+    end
+end
+
 ecs.system(move, "Move", ecs.OnUpdate, "Position, Velocity")
 ecs.system(gravity, "grav", ecs.OnUpdate, "Position, Velocity, Gravity, BouncePlane")
 ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAmount")
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
-
+ecs.system(TimedDestructionSystem, "TimedDestructionSystem", ecs.OnUpdate, "Position, DestructionTimer")
+ecs.system(CollisionSystem, "CollisionSystem", ecs.OnUpdate, "Position, Velocity, SphereCollider")

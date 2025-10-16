@@ -58,3 +58,18 @@ ECS_STRUCT(Speed,
 	float value;
 });
 
+ECS_STRUCT(DestructionTimer,
+{
+	float timeLeft;
+});
+
+ECS_STRUCT(SphereCollider,
+{
+	float radius;
+});
+
+ECS_STRUCT(ProjectileCollider,
+{
+	float unused;
+});
+

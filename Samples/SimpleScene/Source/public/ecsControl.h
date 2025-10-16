@@ -23,5 +23,23 @@ struct CameraPtr
 	GameEngine::Core::Camera* ptr;
 };
 
+struct Shooter
+{
+	float shotInterval;
+	float reloadInterval;
+	float projectileSpeed;
+	int currentAmmo;
+	int defaultAmmo;
+	float timeToShot;
+	std::vector<flecs::entity> projectileCache;
+};
+
+struct Projectile
+{
+	Shooter* shooterPtr;
+	float timeToRecycle;
+};
+
+
 void RegisterEcsControlSystems(flecs::world& world);
 

@@ -6,6 +6,8 @@
 #include <Input/Controller.h>
 #include <Input/InputHandler.h>
 #include <Vector.h>
+#include <RenderObject.h>
+#include <DefaultGeometry.h>
 
 using namespace GameEngine;
 
@@ -47,6 +49,68 @@ void RegisterEcsControlSystems(flecs::world& world)
 			{
 				vel.y = jump.value;
 			}
+		}
+	});
+
+	world.system<const Position, const CameraPtr, Shooter, const ControllerPtr>()
+		.each([&](const Position& position, const CameraPtr& camera, Shooter& shooter, const ControllerPtr& controller)
+	{
+		shooter.timeToShot -= world.delta_time();
+		if (controller.ptr->IsPressed("Shoot") && shooter.timeToShot <= 0.f)
+		{
+			flecs::entity projectile;
+			if (shooter.projectileCache.empty())
+			{
+				projectile = world.entity()
+					.set(BouncePlane{ 0.f, 1.f, 0.f, 5.f })
+					.set(Bounciness{ 0.5f })
+					.set(ProjectileCollider{ 0.f })
+					.set(EntitySystem::ECS::GeometryPtr{ RenderCore::DefaultGeometry::SmallOctahedron() })
+					.set(EntitySystem::ECS::RenderObjectPtr{ new Render::RenderObject() });
+			}
+			else
+			{
+				projectile = shooter.projectileCache.back();
+				shooter.projectileCache.pop_back();
+			}
+
+			Math::Vector3f vel = camera.ptr->GetViewDir() * shooter.projectileSpeed;
+
+			projectile
+				.set(position)
+				.set(Velocity{ vel.x, vel.y, vel.z })
+				.set(Gravity{ 0.f, -9.8065f, 0.f })
+				.set(Projectile(&shooter, 5.f));
+
+			if (--shooter.currentAmmo <= 0)
+			{
+				shooter.timeToShot = shooter.reloadInterval;
+				shooter.currentAmmo = shooter.defaultAmmo;
+			}
+			else
+			{
+				shooter.timeToShot = shooter.shotInterval;
+			}
+		}
+	});
+
+	world.system<Position, Velocity, Gravity, const BouncePlane, Projectile>()
+		.each([&](flecs::entity e, Position& pos, Velocity& vel, Gravity& gravity, const BouncePlane& plane, Projectile& projectile)
+	{
+		if (projectile.timeToRecycle < 0.f)
+		{
+			return;
+		}
+
+		projectile.timeToRecycle -= world.delta_time();
+
+		if (projectile.timeToRecycle < 0.f)
+		{
+			gravity.x = gravity.y = gravity.z = 0.f;
+			vel.x = vel.y = vel.z = 0.f;
+			pos.x = pos.y = pos.z = 1e5f;
+
+			projectile.shooterPtr->projectileCache.push_back(e);
 		}
 	});
 }
