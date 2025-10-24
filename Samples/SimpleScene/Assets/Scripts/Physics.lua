@@ -16,14 +16,16 @@ end
 local function gravity(it)
     for pos, vel, grav, plane, ent in ecs.each(it) do
         local planeEpsilon = 0.1
-		
+
 		if plane.x * pos.x + plane.y * pos.y + plane.z * pos.z < plane.w + planeEpsilon then
-			do return end
+			goto continue
 		end
-		
+
 		vel.x = vel.x + grav.x * it.delta_time
         vel.y = vel.y + grav.y * it.delta_time
 		vel.z = vel.z + grav.z * it.delta_time
+
+		::continue::
     end
 end
 
@@ -60,9 +62,48 @@ local function BounceSystem(it)
     end
 end
 
+local function TimedDestructionSystem(it)
+    for pos, timer in ecs.each(it) do
+        if timer.timeLeft < 0.0 then
+            goto continue
+        end
+
+        timer.timeLeft = timer.timeLeft - it.delta_time
+
+        if timer.timeLeft < 0.0 then
+            pos.x = 1e5
+            pos.y = 1e5
+            pos.z = 1e5
+        end
+
+        ::continue::
+    end
+end
+
+local function distance(pos1, pos2)
+    local dx = pos1.x - pos2.x
+    local dy = pos1.y - pos2.y
+    local dz = pos1.z - pos2.z
+    return math.sqrt(dx * dx + dy * dy + dz * dz)
+end
+
+local colliderQuery = ecs.query("[in] Position, [in] SphereCollider")
+
+local function CollisionSystem(it)
+    for pos1, vel1, collider1, ent1 in ecs.each(it) do
+        for pos2, collider2, ent2 in ecs.each(colliderQuery) do
+            if ent1 ~= ent2 and distance(pos1, pos2) < collider1.radius + collider2.radius then
+                vel1.x = -vel1.x
+                vel1.z = -vel1.z
+            end
+        end
+    end
+end
+
 ecs.system(move, "Move", ecs.OnUpdate, "Position, Velocity")
 ecs.system(gravity, "grav", ecs.OnUpdate, "Position, Velocity, Gravity, BouncePlane")
 ecs.system(FrictionSystem, "FrictionSystem", ecs.OnUpdate, "Velocity, FrictionAmount")
 ecs.system(ShiverSystem, "ShiverSystem", ecs.OnUpdate, "Position, ShiverAmount")
 ecs.system(BounceSystem, "BounceSystem", ecs.OnUpdate, "Position, Velocity, BouncePlane, Bounciness")
-
+ecs.system(TimedDestructionSystem, "TimedDestructionSystem", ecs.OnUpdate, "Position, DestructionTimer")
+ecs.system(CollisionSystem, "CollisionSystem", ecs.OnUpdate, "Position, Velocity, SphereCollider")

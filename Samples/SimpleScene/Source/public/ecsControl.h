@@ -23,5 +23,10 @@ struct CameraPtr
 	GameEngine::Core::Camera* ptr;
 };
 
+struct DestructionTimer
+{
+	float timeLeft;
+};
+
 void RegisterEcsControlSystems(flecs::world& world);
 

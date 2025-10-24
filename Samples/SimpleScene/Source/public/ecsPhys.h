@@ -51,3 +51,7 @@ struct Speed
 	float value;
 };
 
+struct SphereCollider
+{
+	float radius;
+};
