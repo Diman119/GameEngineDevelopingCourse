@@ -49,7 +49,7 @@ namespace GameEngine::World
 				newEntity.add(comp);
 				assert(newEntity.has(comp.id()));
 
-				const char* compValue = objComponent.second.c_str();
+				const char* compValue = objComponent.second->c_str();
 
 				void* ptr = newEntity.get_mut(comp);
 				flecs::cursor cursor = m_World.cursor(comp.id(), ptr);
@@ -69,7 +69,7 @@ namespace GameEngine::World
 
 				if (bIsCustom)
 				{
-					cursor.set_uint(WorldParser::ParseCustom(objComponent.first, objComponent.second));
+					cursor.set_uint(WorldParser::ParseCustom(objComponent.first, *objComponent.second));
 				}
 
 				ret = cursor.pop();

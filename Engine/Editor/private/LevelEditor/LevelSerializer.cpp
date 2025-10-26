@@ -29,7 +29,7 @@ namespace GameEngine::Editor
 
 			for (const World::LevelObject::Component& component : levelObject.GetComponents())
 			{
-				entityElem->SetAttribute(component.first.c_str(), component.second.c_str());
+				entityElem->SetAttribute(component.first.c_str(), component.second->c_str());
 			}
 		}
 

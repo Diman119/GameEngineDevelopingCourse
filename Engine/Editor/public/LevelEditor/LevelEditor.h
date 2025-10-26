@@ -22,12 +22,16 @@ namespace GameEngine
 
 		private:
 			void Save();
+			void AddDefaultObject();
+			std::string CreateUniqueObjectName();
+			void CreateECSEntityForLevelObject(World::LevelObject& levelObject);
 
 		private:
 			Core::Timer m_SaveButtonMessageTimer;
 			bool m_SaveButtonPressed = false;
 			float m_TimeToShowSaveButtonMessage = 3.f;
 
+			flecs::world& m_World;
 			std::optional<World::Level> m_Level = std::nullopt;
 		};
 	}

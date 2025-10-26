@@ -354,3 +354,5 @@ cmake_output/
 
 # Local Build
 localBuild/
+
+.idea

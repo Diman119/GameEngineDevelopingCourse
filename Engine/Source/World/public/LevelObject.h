@@ -9,7 +9,7 @@ namespace GameEngine::World
 	public:
 		using ComponentName = std::string;
 		using ComponentDesc = std::string;
-		using Component = std::pair<ComponentName, ComponentDesc>;
+		using Component = std::pair<ComponentName, std::shared_ptr<ComponentDesc>>;
 		using ComponentList = std::vector<Component>;
 
 	public:

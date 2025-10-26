@@ -9,7 +9,8 @@ namespace GameEngine::EntitySystem::LevelEditorECS
 {
 	struct PositionDesc
 	{
-		const World::LevelObject::ComponentDesc* value;
+		// using cstyle pointers to values stored directly in a vector was bold
+		std::shared_ptr<World::LevelObject::ComponentDesc> value;
 	};
 
 	void RegisterLevelEditorEcsSystems(flecs::world& world);
